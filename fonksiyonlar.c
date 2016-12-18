@@ -18,7 +18,7 @@
 
 #define py Player1.Loc.y
 #define px Player1.Loc.x
-#define en Enemies[i]
+#define en Enemies.p[i]
 #define ey en.Loc.y
 #define ex en.Loc.x
 #define MAPc(y,x) Map[((x)*(Height)) + (y)]
@@ -27,6 +27,28 @@ CChar *Map;
 int Height = 40;
 int Width  = 80;
 int Turn = 0;
+
+EnemyArray DynamicArray(int step){
+  EnemyArray a;
+  a.size = 0;
+  a.step = step;
+  a.p = (Enemy*) malloc(step * sizeof(Enemy));
+  return a;
+}
+
+void Push(EnemyArray *a, Enemy n){
+  if((*a).size % (*a).step == 0) 
+    (*a).p = (Enemy*) realloc((*a).p, ((*a).size+(*a).step) * sizeof(Enemy));
+  (*a).p[(*a).size] = n;
+  (*a).size++;
+}
+
+Enemy Pop(EnemyArray *a){
+  if((*a).size % (*a).step == 0) 
+    (*a).p = (Enemy*) realloc((*a).p, ((*a).size-(*a).step) * sizeof(Enemy));
+  (*a).size--;
+  return (*a).p[(*a).size];
+}
 
 void printChar(CChar c){
   attron(COLOR_PAIR(c.Type));
@@ -78,8 +100,8 @@ void olustur(int h, int w){
 
   rastgeleEngel(Map);
   Player1 = (Player){ 3, 0 , { 10, 10 }, Playr};
-  Enemies = DynamicArray();
-  Push(Enemis,(Enemy){ 0, {1,1}, Ghost });
+  Enemies = DynamicArray(3);
+  //Push(&Enemies,(Enemy){ 0, {1,1}, Ghost });
 }
 
 
@@ -125,7 +147,7 @@ void yaz(){
         printw("\n");
     }
     printPlayer(Player1);
-    for(int i = 0; i < 4; i++) printEnemy(Enemies[i]);
+    for(int i = 0; i < Enemies.size; i++) printEnemy(Enemies.p[i]);
 }
 
 char isMovable(int y, int x){
@@ -164,7 +186,7 @@ char Random(int min, int max){
 }
 
 int Tick(){
-  if(Turn % 120)  
+  if(Turn % 600 == 0) Push(&Enemies,(Enemy){ {1,1}, Ghost });
   if(Turn % 60 == 0) {
     int i, j;
     for(i=1;i<Height-1;i++){
@@ -177,7 +199,7 @@ int Tick(){
     }
   }
   if(Turn % 30 == 0) {
-    for(int i = 0;i < 4;i++){
+    for(int i = 0;i < Enemies.size;i++){
       int dx = px - ex;
       int dy = py - ey;
       if(abs(dx) > abs(dy)){
@@ -187,9 +209,9 @@ int Tick(){
         if(dy > 0) ey++;
         else ey--;
       }
-      for(int w = 0; w < 4; w++){
+      for(int w = 0; w < Enemies.size; w++){
         if(i==w) continue;
-        if(Enemies[w].Loc.y == ey && Enemies[w].Loc.x == ex)
+        if(Enemies.p[w].Loc.y == ey && Enemies.p[w].Loc.x == ex)
         { ey++; ex++; }
       }
       if(ex == px && ey == py){
@@ -201,6 +223,7 @@ int Tick(){
         MAPc(ey,ex) = Air;
         MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
         MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
+        MAPc(Random(1,Height-1),Random(1,Width-1)) = Wall;
       }
       if(MAPc(ey,ex).Type == Wall.Type){
         MAPc(ey,ex) = Portal;
@@ -211,26 +234,4 @@ int Tick(){
   }
   Turn++;
   return -1;
-}
-
-
-EnemyArray DynamicArray(int step = 3){
-  IntArray a;
-  a.size = 0;
-  a.step = step;
-  a.p = (Enemy*) malloc(step * sizeof(Enemy));
-}
-
-Push(EnemyArray a, int n){
-  if(a.size % a.step == 0) 
-    a.p = (int*) realloc(a.p, (a.size+a.step) * sizeof(Enemy));
-  a.p[a.size] = n;
-  a.size++;
-}
-
-Pop(EnemyArray a){
-  if(a.size % a.step == 0) 
-    a.p = (int*) realloc(a.p, (a.size-a.step) * sizeof(Enemy));
-  a.size--;
-  return a.p[a.size];
 }
