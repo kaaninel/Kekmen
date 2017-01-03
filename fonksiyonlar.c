@@ -27,6 +27,7 @@ CChar *Map;
 int Height = 40;
 int Width  = 80;
 int Turn = 0;
+int BombCount = 0;
 
 EnemyArray DynamicArray(int step){
   EnemyArray a;
@@ -174,6 +175,16 @@ void Event(char pressed){
       if(isMovable(0,1))
         Player1.Loc.x++;
       break;
+		case ' ':
+			if(BombCount < 3){
+				MAPc(py,px) = Bomb;
+				BombCount++;
+			}
+			break;
+		case 'p': 
+			printw("Devam etmek icin bosluk tusuna basin.");
+			while(getch() != ' '){}
+			break;
   }
   if(MAPc(py,px).Type == Star.Type){
     MAPc(py,px) = Air;
@@ -219,17 +230,22 @@ int Tick(){
         if(!Player1.Health) return Player1.Points;
         en.Loc = (Point){ 1, 1 };
       } 
-      if(MAPc(ey,ex).Type == Star.Type){
-        MAPc(ey,ex) = Air;
-        MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
-        MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
-        MAPc(Random(1,Height-1),Random(1,Width-1)) = Wall;
-      }
-      if(MAPc(ey,ex).Type == Wall.Type){
-        MAPc(ey,ex) = Portal;
-        MAPc(ey,ex).Char  = '0';
-        MAPc(ey,ex).CharS = '9';
-      }
+			if(MAPc(ey,ex).Type == Star.Type){
+				MAPc(ey,ex) = Air;
+				MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
+				MAPc(Random(1,Height-1),Random(1,Width-1)) = Star;
+				MAPc(Random(1,Height-1),Random(1,Width-1)) = Wall;
+			}
+			else if(MAPc(ey,ex).Type == Wall.Type){
+				MAPc(ey,ex) = Portal;
+				MAPc(ey,ex).Char  = '0';
+				MAPc(ey,ex).CharS = '9';
+			}
+			else if(MAPc(ey,ex).Type == Bomb.Type){
+				MAPc(ey,ex) = Air;
+				BombCount--;
+				en.Loc = (Point){ 1, 1 };
+			}
     }
   }
   Turn++;

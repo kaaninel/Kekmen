@@ -26,6 +26,7 @@ int main(){
   initChar(Playr);
   initChar(Ghost);
   initChar(Portal);
+  initChar(Bomb);
   initChar(Star);
   initChar(Border);
   initChar(Text);

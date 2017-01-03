@@ -53,10 +53,11 @@ void initChar(CChar c){
 
 CChar Air    = { ' ', ' ', 0, COLOR_BLACK, COLOR_BLACK}; 
 CChar Wall   = { ' ', ' ', 1, COLOR_WHITE, COLOR_WHITE}; 
-CChar Playr  = { '{', '}', 2, COLOR_BLUE , COLOR_BLACK}; 
+CChar Playr  = { '{', '}', 2, COLOR_BLUE , COLOR_GREEN}; 
 CChar Ghost  = { '[', ']', 3, COLOR_WHITE, COLOR_RED  }; 
 CChar Star   = { '<', '>', 4, COLOR_GREEN, COLOR_BLACK}; 
 CChar Portal = { ' ', ' ', 5, COLOR_WHITE, COLOR_BLUE }; 
+CChar Bomb   = { '(', ')', 6, COLOR_RED  , COLOR_BLUE }; 
 CChar Border = { ' ', ' ', 8, COLOR_WHITE, COLOR_WHITE}; 
 CChar Text   = { ' ', ' ', 9, COLOR_WHITE, COLOR_BLACK}; 
 
